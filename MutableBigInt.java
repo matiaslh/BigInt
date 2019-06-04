@@ -146,20 +146,4 @@ public class MutableBigInt {
             this.setNumber(STRING_ZERO);
         }
     }
-
-    public BigInt clone() {
-        return new BigInt(this.getNumber());
-    }
-
-    public boolean equals(Object obj) {
-        BigInt other = (BigInt) obj;
-        this.removeLeadingZeros();
-        other.removeLeadingZeros();
-        return this.getNumber().equals(other.getNumber());
-    }
-
-    public String toString() {
-        return this.getNumber();
-    }
-
 }

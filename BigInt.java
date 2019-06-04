@@ -28,20 +28,21 @@ public class BigInt extends MutableBigInt {
     this.setOriginalBase(baseFrom);
   }
 
-  public BigInt convertToOriginalBase() {
+  public BigInt convertToBase(int base) {
 
     if (this.getOriginalBase() == 10) {
       return this.clone();
     }
 
-    BigInt baseTo = new BigInt(this.getOriginalBase());
+    BigInt baseTo = new BigInt(base);
     BigInt counter = this.clone();
     BigInt result = new BigInt(BigInt.EMPTY);
 
     while (counter.compareTo(BigInt.ZERO) > 0) {
       BigInt[] divResult = counter.divRemainder(baseTo);
       counter = divResult[0];
-      result.addToFront(divResult[1].getNumber());
+      char toAdd = BigInt.digitOrder.charAt(divResult[1].toInteger());
+      result.addToFront(toAdd + "");
     }
     return result;
   }
@@ -66,7 +67,6 @@ public class BigInt extends MutableBigInt {
       temp = temp.mult(new BigInt(multValue));
       result = result.add(temp);
     }
-//qet
     return result.getNumber();
   }
 
@@ -83,7 +83,7 @@ public class BigInt extends MutableBigInt {
     if (this.getChar(0) == '-') {
       temp.removeFromFront(1);
     }
-    return temp;
+    return temp.convertToBase(this.getOriginalBase());
   }
 
   public BigInt negative() {
@@ -94,7 +94,7 @@ public class BigInt extends MutableBigInt {
       temp.addToFront("-");
     }
     temp.format();
-    return temp;
+    return temp.convertToBase(this.getOriginalBase());
   }
 
   public BigInt add(BigInt other) {
@@ -129,7 +129,7 @@ public class BigInt extends MutableBigInt {
       result.addToFront(String.valueOf(carry));
     }
     result.format();
-    return result;
+    return result.convertToBase(this.getOriginalBase());
   }
 
   public BigInt sub(BigInt other) {
@@ -161,7 +161,7 @@ public class BigInt extends MutableBigInt {
     }
     BigInt retNum = new BigInt(returnStr);
     retNum.format();
-    return retNum;
+    return retNum.convertToBase(this.getOriginalBase());
   }
 
   public BigInt mult(BigInt other) {
@@ -205,7 +205,7 @@ public class BigInt extends MutableBigInt {
       zeros = zeros + "0";
     }
     result.format();
-    return result;
+    return result.convertToBase(this.getOriginalBase());
   }
 
   public BigInt div(BigInt other) {
@@ -239,7 +239,7 @@ public class BigInt extends MutableBigInt {
       }
     }
     result.format();
-    return result;
+    return result.convertToBase(this.getOriginalBase());
   }
 
   private BigInt[] divRemainder(BigInt other) {
@@ -309,7 +309,7 @@ public class BigInt extends MutableBigInt {
       result = result.mult(this);
       other = other.sub(BigInt.ONE);
     }
-    return result;
+    return result.convertToBase(this.getOriginalBase());
   }
 
   public int compareTo(BigInt other) {
@@ -351,6 +351,25 @@ public class BigInt extends MutableBigInt {
 
   public void setOriginalBase(int originalBase) {
     this.originalBase = originalBase;
+  }
+
+  public BigInt clone() {
+    return new BigInt(this.getNumber());
+  }
+
+  public boolean equals(Object obj) {
+    BigInt other = (BigInt) obj;
+    this.removeLeadingZeros();
+    other.removeLeadingZeros();
+    return this.getNumber().equals(other.getNumber());
+  }
+
+  public String toString() {
+    return this.convertToBase(this.getOriginalBase()).getNumber();
+  }
+
+  public int toInteger() {
+    return Integer.parseInt(this.getNumber());
   }
 
 }

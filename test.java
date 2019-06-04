@@ -4,11 +4,11 @@ import java.math.BigInteger;
 public class test {
     public static void main(String[] arg) {
 
-        BigInt test1 = new BigInt("ABC", 16);
+        BigInt test1 = new BigInt("01010100011010", 2);
         // BigInt test2 = test1.exp(new BigInt(4));
         // BigInt test2 = new BigInt("11234219");
         // BigInt res = test1.div(test2);
-        System.out.println(test1);
+        System.out.println(test1.convertToBase(62));
 
         // runTests();
 
