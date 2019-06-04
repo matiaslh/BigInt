@@ -66,7 +66,7 @@ public class BigInt extends MutableBigInt {
       temp = temp.mult(new BigInt(multValue));
       result = result.add(temp);
     }
-
+//qet
     return result.getNumber();
   }
 
