@@ -29,11 +29,6 @@ public class BigInt extends MutableBigInt {
   }
 
   public BigInt convertToBase(int base) {
-
-    if (this.getOriginalBase() == 10) {
-      return this.clone();
-    }
-
     BigInt baseTo = new BigInt(base);
     BigInt counter = this.clone();
     BigInt result = new BigInt(BigInt.EMPTY);
