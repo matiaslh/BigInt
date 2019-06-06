@@ -72,6 +72,15 @@ public class BigInt extends MutableBigInt {
     return result.getNumber();
   }
 
+  public BigInt roundDownToInteger() {
+    BigInt myself = this.clone();
+    if (myself.hasDecimal()) {
+      String newString = this.getNumber().substring(0, this.getNumber().indexOf("."));
+      myself.setNumber(newString);
+    }
+    return myself;
+  }
+
   public BigInt abs() {
     BigInt myself = this.clone();
     if (this.getChar(0) == '-') {
@@ -188,26 +197,27 @@ public class BigInt extends MutableBigInt {
         }
         int multDigits = this.getNumberPlace(i) * other.getNumberPlace(j) + carry;
         String multDigitsStr = String.valueOf(multDigits);
-
-        String toAdd = String.valueOf(multDigitsStr.charAt(multDigitsStr.length() - 1));
-        tempNum.addToFront(toAdd);
-        tempNum.moveDecimal(i + j);
-
-        if (multDigitsStr.length() == 2) {
-          carry = multDigitsStr.charAt(0) - '0';
-        } else {
-          carry = 0;
-        }
+        multDigitsStr = multDigitsStr + MutableBigInt.repeatString("0", i + j);
+        result = result.add(new BigInt(multDigitsStr));
       }
-      if (carry > 0) {
-        tempNum.addToFront(String.valueOf(carry));
-        carry = 0;
-      }
-
-      result = result.add(tempNum);
     }
     result.format();
     return result.convertDecimalToBase(this.getOriginalBase());
+  }
+
+  public BigInt div(BigInt other) {
+
+    if (other.isZero()) {
+      return BigInt.UNDEFINED.clone();
+    }
+
+    int precision = 8;
+    BigInt[] result_with_remainder = this.divRemainder(other);
+    BigInt remainder = result_with_remainder[1];
+    remainder.moveDecimal(precision);
+    BigInt[] second_result = remainder.divRemainder(other);
+    second_result[0].moveDecimal(-precision);
+    return result_with_remainder[0].add(second_result[0]);
   }
 
   public BigInt[] divRemainder(BigInt other) {
@@ -221,18 +231,20 @@ public class BigInt extends MutableBigInt {
     }
     if (this.isNegative() || other.isNegative()) {
       BigInt[] result = this.abs().divRemainder(other.abs());
-      result[0].negative();
+      result[0] = result[0].negative();
       return result;
     }
 
     BigInt myself = this.clone();
 
-    if (other.compareTo(BigInt.ONE) == -1) {
+    if (other.decimalPlaces() > 0) {
       BigInt divisor = other.clone();
       int placesToMove = divisor.decimalPlaces();
       divisor.moveDecimal(placesToMove);
       myself.moveDecimal(placesToMove);
-      return myself.divRemainder(divisor);
+      BigInt[] result = myself.divRemainder(divisor);
+      result[1].moveDecimal(-placesToMove);
+      return result;
     }
 
     BigInt result = new BigInt(BigInt.EMPTY);
@@ -253,7 +265,7 @@ public class BigInt extends MutableBigInt {
     }
     result.format();
     current.format();
-    BigInt[] result_remainder = {result, current};
+    BigInt[] result_remainder = { result, current };
     result_remainder[0] = result_remainder[0].convertDecimalToBase(this.getOriginalBase());
     result_remainder[1] = result_remainder[1].convertDecimalToBase(this.getOriginalBase());
     return result_remainder;

@@ -58,14 +58,14 @@ public class MutableBigInt {
     }
 
     public void removePlace(int place) {
-        if (place == this.integerPlaces() - 1) {
+        int index = this.getIndexFromPlace(place);
+        if (index == 0) {
             this.removeFromFront(1);
             return;
-        } else if (-place == this.decimalPlaces() - 1) {
+        } else if (index == this.getLength() - 1) {
             this.removeFromBack(1);
             return;
         }
-        int index = this.getIndexFromPlace(place);
         String newStr = this.getNumber().substring(0, index) + this.getNumber().substring(index + 1);
         this.setNumber(newStr);
     }
@@ -74,8 +74,9 @@ public class MutableBigInt {
         int indexDecimal = this.getLength();
         if (this.hasDecimal()) {
             indexDecimal = this.getNumber().indexOf(".");
+            String newString = this.getNumber().replaceAll("\\.", "");
+            this.setNumber(newString);
         }
-        this.removeDecimal();
         if (indexDecimal + places > this.getLength()) {
             int amountZeros = indexDecimal + places - this.getLength();
             this.addToBack(MutableBigInt.repeatString("0", amountZeros));
@@ -90,13 +91,6 @@ public class MutableBigInt {
         String newString = this.getNumber().substring(0, indexDecimal + places) + "."
                 + this.getNumber().substring(indexDecimal + places);
         this.setNumber(newString);
-    }
-
-    public void removeDecimal() {
-        if (this.hasDecimal()) {
-            String newString = this.getNumber().replaceAll("\\.", "");
-            this.setNumber(newString);
-        }
     }
 
     public int integerPlaces() {
@@ -211,6 +205,9 @@ public class MutableBigInt {
         this.removeLeadingZeros();
         this.removeTrailingZeros();
         this.removeUnneededDecimal();
+        if (this.getLength() > 0 && this.getChar(0) == '.') {
+            this.addToFront("0");
+        }
         if (this.isZero()) {
             this.setNumber(STRING_ZERO);
         }

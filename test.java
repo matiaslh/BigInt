@@ -4,14 +4,16 @@ import java.math.BigInteger;
 public class test {
     public static void main(String[] arg) {
 
-        // BigInt test1 = new BigInt("3.5");
-        // BigInt test2 = test1.add(new BigInt("2"));
-        BigInt[] test3 = new BigInt("5567.5").divRemainder(new BigInt("0.2435"));
+        // BigInt test1 = new BigInt("12");
+        // BigInt test2 = test1.mult(new BigInt("-12341"));
+        BigInt test3 = new BigInt("-0001234").div(new BigInt("-12341"));
+        // BigInt test2 = new BigInt("4600567").div(new BigInt("1234"));
+
 
         // BigInt test2 = new BigInt("11234219");
         // BigInt res = test1.div(test2);
-        System.out.println(test3[0] + " "+test3[1]);
-        // System.out.println(test3);
+        // System.out.println(test3[0] + " "+test3[1]);
+        System.out.println(test3);
 
         // runTests();
 
@@ -34,8 +36,7 @@ public class test {
                 String myResultAdd = myNum.add(new BigInt(second)).toString();
                 String myResultSub = myNum.sub(new BigInt(second)).toString();
                 String myResultMult = myNum.mult(new BigInt(second)).toString();
-                BigInt divResult = myNum.div(new BigInt(second));
-                divResult.removeDecimal();
+                BigInt divResult = myNum.div(new BigInt(second)).roundDownToInteger();
                 String myResultDiv = divResult.toString();
                 String myResultCompareTo = String.valueOf(myNum.compareTo(new BigInt(second)));
 
@@ -51,18 +52,18 @@ public class test {
                 }
                 String theirResultCompareTo = String.valueOf(theirNum.compareTo(new BigInteger(second)));
 
-                assertTrue(myResultAdd, theirResultAdd);
-                assertTrue(myResultSub, theirResultSub);
-                assertTrue(myResultMult, theirResultMult);
-                assertTrue(myResultDiv, theirResultDiv);
-                assertTrue(myResultCompareTo, theirResultCompareTo);
+                assertTrue(myResultAdd, theirResultAdd, "add");
+                assertTrue(myResultSub, theirResultSub, "sub");
+                assertTrue(myResultMult, theirResultMult, "mult");
+                assertTrue(myResultDiv, theirResultDiv, "div");
+                assertTrue(myResultCompareTo, theirResultCompareTo, "compare");
             }
         }
     }
 
-    public static void assertTrue(String x, String y) {
+    public static void assertTrue(String x, String y, String message) {
         if (!x.equals(y)) {
-            System.out.println(x + " != " + y + " - WRONG");
+            System.out.println(x + " != " + y + " - WRONG " + message);
         }
     }
 }
