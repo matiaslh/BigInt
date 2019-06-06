@@ -4,11 +4,14 @@ import java.math.BigInteger;
 public class test {
     public static void main(String[] arg) {
 
-        BigInt test1 = new BigInt("3.5");
-        BigInt test2 = test1.add(new BigInt("2"));
+        // BigInt test1 = new BigInt("3.5");
+        // BigInt test2 = test1.add(new BigInt("2"));
+        BigInt[] test3 = new BigInt("5567.5").divRemainder(new BigInt("0.2435"));
+
         // BigInt test2 = new BigInt("11234219");
         // BigInt res = test1.div(test2);
-        System.out.println(test2);
+        System.out.println(test3[0] + " "+test3[1]);
+        // System.out.println(test3);
 
         // runTests();
 
@@ -31,7 +34,9 @@ public class test {
                 String myResultAdd = myNum.add(new BigInt(second)).toString();
                 String myResultSub = myNum.sub(new BigInt(second)).toString();
                 String myResultMult = myNum.mult(new BigInt(second)).toString();
-                String myResultDiv = myNum.div(new BigInt(second)).removeDecimal().toString();
+                BigInt divResult = myNum.div(new BigInt(second));
+                divResult.removeDecimal();
+                String myResultDiv = divResult.toString();
                 String myResultCompareTo = String.valueOf(myNum.compareTo(new BigInt(second)));
 
                 BigInteger theirNum = new BigInteger(first);
@@ -39,9 +44,9 @@ public class test {
                 String theirResultSub = theirNum.subtract(new BigInteger(second)).toString();
                 String theirResultMult = theirNum.multiply(new BigInteger(second)).toString();
                 String theirResultDiv = null;
-                try{
+                try {
                     theirResultDiv = theirNum.divide(new BigInteger(second)).toString();
-                }catch(Exception e){
+                } catch (Exception e) {
                     theirResultDiv = "undefined";
                 }
                 String theirResultCompareTo = String.valueOf(theirNum.compareTo(new BigInteger(second)));

@@ -11,12 +11,91 @@ public class MutableBigInt {
     }
 
     public void removeLeadingZeros() {
-        int currIndex = 0;
-        if (this.isNegative()) {
-            currIndex = 1;
+        for (int i = this.integerPlaces() - 1; i >= this.decimalPlaces(); i--) {
+            if (this.getLength() == 1 || this.getNumberPlace(i) != 0) {
+                break;
+            } else {
+                this.removePlace(i);
+            }
         }
-        while (this.integerPlaces() > 1 && this.getDigit(currIndex) == 0) {
-            this.removeIndex(currIndex);
+    }
+
+    public void removeTrailingZeros() {
+        for (int i = -this.decimalPlaces(); i < 0; i++) {
+            if (this.getLength() == 1 || this.getNumberPlace(i) != 0) {
+                break;
+            } else {
+                this.removePlace(i);
+            }
+        }
+    }
+
+    public void removeUnneededDecimal() {
+        if (this.getLength() > 1 && this.getChar(this.getLength() - 1) == '.') {
+            this.removeFromBack(1);
+        }
+    }
+
+    public int getIndexFromPlace(int place) {
+        if (this.hasDecimal()) {
+            int decimalIndex = this.getNumber().indexOf(".");
+            return decimalIndex - place - (place >= 0 ? 1 : 0);
+        } else {
+            return this.getLength() - place - 1;
+        }
+    }
+
+    public int getNumberPlace(int place) {
+        int index = this.getIndexFromPlace(place);
+        if (index < 0 || index >= this.getLength()) {
+            return 0;
+        }
+        return this.getDigit(index);
+    }
+
+    public void setNumberPlace(int place, int digit) {
+        this.setDigit(this.getIndexFromPlace(place), digit);
+    }
+
+    public void removePlace(int place) {
+        if (place == this.integerPlaces() - 1) {
+            this.removeFromFront(1);
+            return;
+        } else if (-place == this.decimalPlaces() - 1) {
+            this.removeFromBack(1);
+            return;
+        }
+        int index = this.getIndexFromPlace(place);
+        String newStr = this.getNumber().substring(0, index) + this.getNumber().substring(index + 1);
+        this.setNumber(newStr);
+    }
+
+    public void moveDecimal(int places) {
+        int indexDecimal = this.getLength();
+        if (this.hasDecimal()) {
+            indexDecimal = this.getNumber().indexOf(".");
+        }
+        this.removeDecimal();
+        if (indexDecimal + places > this.getLength()) {
+            int amountZeros = indexDecimal + places - this.getLength();
+            this.addToBack(MutableBigInt.repeatString("0", amountZeros));
+            return;
+        } else if (indexDecimal + places < 0) {
+            int amountZeros = -(indexDecimal + places);
+            this.addToFront(MutableBigInt.repeatString("0", amountZeros));
+            this.setNumber("0." + this.getNumber());
+            return;
+        }
+
+        String newString = this.getNumber().substring(0, indexDecimal + places) + "."
+                + this.getNumber().substring(indexDecimal + places);
+        this.setNumber(newString);
+    }
+
+    public void removeDecimal() {
+        if (this.hasDecimal()) {
+            String newString = this.getNumber().replaceAll("\\.", "");
+            this.setNumber(newString);
         }
     }
 
@@ -58,7 +137,7 @@ public class MutableBigInt {
         }
         for (int i = 0; i < this.getLength(); i++) {
             char currChar = this.getChar(i);
-            if (currChar != '0' && currChar != '-') {
+            if (currChar != '0' && currChar != '-' && currChar != '.') {
                 return false;
             }
         }
@@ -66,12 +145,12 @@ public class MutableBigInt {
     }
 
     public void borrowOne(int index) {
-        if (this.getDigit(index) == 0) {
-            this.setDigit(index, 9);
-            this.borrowOne(index - 1);
+        if (this.getNumberPlace(index) == 0) {
+            this.setNumberPlace(index, 9);
+            this.borrowOne(index + 1);
         } else {
-            int digit = this.getDigit(index) - 1;
-            this.setDigit(index, digit);
+            int digit = this.getNumberPlace(index) - 1;
+            this.setNumberPlace(index, digit);
         }
     }
 
@@ -119,7 +198,7 @@ public class MutableBigInt {
     }
 
     public void removeFromBack(int amount) {
-        String newStr = this.getNumber().substring(0, this.getLength() - 1 - amount);
+        String newStr = this.getNumber().substring(0, this.getLength() - amount);
         this.setNumber(newStr);
     }
 
@@ -128,22 +207,25 @@ public class MutableBigInt {
         this.setNumber(newStr);
     }
 
-    public void removeIndex(int index) {
-        if (index == 0) {
-            this.removeFromFront(1);
-            return;
-        } else if (index == this.getLength() - 1) {
-            this.removeFromBack(1);
-            return;
-        }
-        String newStr = this.getNumber().substring(0, index) + this.getNumber().substring(index + 1);
-        this.setNumber(newStr);
-    }
-
     public void format() {
         this.removeLeadingZeros();
+        this.removeTrailingZeros();
+        this.removeUnneededDecimal();
         if (this.isZero()) {
             this.setNumber(STRING_ZERO);
         }
     }
+
+    public static String repeatString(String str, int n) {
+        String newString = "";
+        for (int i = 0; i < n; i++) {
+            newString += str;
+        }
+        return newString;
+    }
+
+    public String toString() {
+        return this.getNumber();
+    }
+
 }
