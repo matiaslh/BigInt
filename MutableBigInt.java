@@ -12,7 +12,7 @@ public class MutableBigInt {
 
     public void removeLeadingZeros() {
         for (int i = this.integerPlaces() - 1; i >= this.decimalPlaces(); i--) {
-            if (this.getLength() == 1 || this.getNumberPlace(i) != 0) {
+            if (this.getLength() == 1 + (this.isNegative() ? 1 : 0) || this.getNumberPlace(i) != 0) {
                 break;
             } else {
                 this.removePlace(i);
@@ -36,6 +36,14 @@ public class MutableBigInt {
         }
     }
 
+    public void addNeededZero() {
+        int isNegative = this.isNegative() ? 1 : 0;
+        if (this.getLength() > 0 && this.getChar(isNegative) == '.') {
+            String newString = this.getNumber().substring(isNegative);
+            this.setNumber((isNegative == 1 ? "-" : "") + "0" + newString);
+        }
+    }
+
     public int getIndexFromPlace(int place) {
         if (this.hasDecimal()) {
             int decimalIndex = this.getNumber().indexOf(".");
@@ -54,7 +62,11 @@ public class MutableBigInt {
     }
 
     public void setNumberPlace(int place, int digit) {
-        this.setDigit(this.getIndexFromPlace(place), digit);
+        int index = this.getIndexFromPlace(place);
+        if (index >= this.getLength()) {
+            this.addToBack(MutableBigInt.repeatString("0", index - this.getLength() + 1));
+        }
+        this.setDigit(index, digit);
     }
 
     public void removePlace(int place) {
@@ -71,6 +83,12 @@ public class MutableBigInt {
     }
 
     public void moveDecimal(int places) {
+
+        boolean isNegative = this.isNegative();
+        if (isNegative) {
+            this.setNumber(this.getNumber().substring(1));
+        }
+
         int indexDecimal = this.getLength();
         if (this.hasDecimal()) {
             indexDecimal = this.getNumber().indexOf(".");
@@ -91,6 +109,9 @@ public class MutableBigInt {
         String newString = this.getNumber().substring(0, indexDecimal + places) + "."
                 + this.getNumber().substring(indexDecimal + places);
         this.setNumber(newString);
+        if (isNegative) {
+            this.addToFront("-");
+        }
     }
 
     public int integerPlaces() {
@@ -205,6 +226,7 @@ public class MutableBigInt {
         this.removeLeadingZeros();
         this.removeTrailingZeros();
         this.removeUnneededDecimal();
+        this.addNeededZero();
         if (this.getLength() > 0 && this.getChar(0) == '.') {
             this.addToFront("0");
         }
