@@ -1,11 +1,11 @@
-public class MutableBigInt {
+public class MutableLargeDecimal {
 
     public static final String STRING_ZERO = "0";
     public static final String digitOrder = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     private String decimalNumber;
 
-    public MutableBigInt(String str) {
+    public MutableLargeDecimal(String str) {
         this.setNumber(str);
         this.format();
     }
@@ -64,7 +64,7 @@ public class MutableBigInt {
     public void setNumberPlace(int place, int digit) {
         int index = this.getIndexFromPlace(place);
         if (index >= this.getLength()) {
-            this.addToBack("." + MutableBigInt.repeatString("0", index - this.getLength() + 1));
+            this.addToBack("." + MutableLargeDecimal.repeatString("0", index - this.getLength() + 1));
             index = this.getIndexFromPlace(place);
         }
         this.setDigit(index, digit);
@@ -98,7 +98,7 @@ public class MutableBigInt {
         }
         if (indexDecimal + places > this.getLength()) {
             int amountZeros = indexDecimal + places - this.getLength();
-            this.addToBack(MutableBigInt.repeatString("0", amountZeros));
+            this.addToBack(MutableLargeDecimal.repeatString("0", amountZeros));
             if (isNegative) {
                 this.addToFront("-");
             }
@@ -106,7 +106,7 @@ public class MutableBigInt {
             return;
         } else if (indexDecimal + places < 0) {
             int amountZeros = -(indexDecimal + places);
-            this.addToFront(MutableBigInt.repeatString("0", amountZeros));
+            this.addToFront(MutableLargeDecimal.repeatString("0", amountZeros));
             this.setNumber("0." + this.getNumber());
             if (isNegative) {
                 this.addToFront("-");

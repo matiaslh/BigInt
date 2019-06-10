@@ -73,8 +73,8 @@ public class test {
 
         System.out.println("Testing: " + first + ", " + second);
 
-        BigInt myNum = new BigInt(first);
-        BigInt myNum2 = new BigInt(second);
+        LargeDecimal myNum = new LargeDecimal(first);
+        LargeDecimal myNum2 = new LargeDecimal(second);
 
         String myResultAdd = myNum.add(myNum2).toString();
         String myResultSub = myNum.sub(myNum2).toString();
@@ -85,7 +85,7 @@ public class test {
         BigDecimal theirNum = new BigDecimal(first);
         BigDecimal theirNum2 = new BigDecimal(second);
 
-        MathContext mc = new MathContext(8, RoundingMode.FLOOR);
+        MathContext mc = MathContext.DECIMAL128;
         BigDecimal theirResultAdd = theirNum.add(theirNum2, mc);
         BigDecimal theirResultSub = theirNum.subtract(theirNum2, mc);
         BigDecimal theirResultMult = theirNum.multiply(theirNum2, mc);
