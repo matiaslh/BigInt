@@ -36,11 +36,16 @@ public class MutableLargeDecimal {
         }
     }
 
-    public void addNeededZero() {
+    public void addNeededZeros() {
         int isNegative = this.isNegative() ? 1 : 0;
-        if (this.getLength() > 0 && this.getChar(isNegative) == '.') {
-            String newString = this.getNumber().substring(isNegative);
-            this.setNumber((isNegative == 1 ? "-" : "") + "0" + newString);
+        if (this.getLength() > 0) {
+            if (this.getChar(isNegative) == '.') {
+                String newString = this.getNumber().substring(isNegative);
+                this.setNumber((isNegative == 1 ? "-" : "") + "0" + newString);
+            }
+            if (this.getChar(this.getLength() - 1) == '.') {
+                this.addToBack("0");
+            }
         }
     }
 
@@ -236,7 +241,7 @@ public class MutableLargeDecimal {
         this.removeLeadingZeros();
         this.removeTrailingZeros();
         this.removeUnneededDecimal();
-        this.addNeededZero();
+        this.addNeededZeros();
         if (this.getLength() > 0 && this.getChar(0) == '.') {
             this.addToFront("0");
         }

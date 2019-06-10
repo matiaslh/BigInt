@@ -85,7 +85,7 @@ public class test {
         BigDecimal theirNum = new BigDecimal(first);
         BigDecimal theirNum2 = new BigDecimal(second);
 
-        MathContext mc = MathContext.DECIMAL128;
+        MathContext mc = new MathContext(8, RoundingMode.FLOOR);
         BigDecimal theirResultAdd = theirNum.add(theirNum2, mc);
         BigDecimal theirResultSub = theirNum.subtract(theirNum2, mc);
         BigDecimal theirResultMult = theirNum.multiply(theirNum2, mc);
@@ -100,8 +100,8 @@ public class test {
     }
 
     public static void assertTrue(BigDecimal x, BigDecimal y, String message) throws Exception {
-        int compare = x.compareTo(y);
-        if (compare != 0) {
+        int compare = x.subtract(y).compareTo(new BigDecimal("0.1"));
+        if (compare == -1) {
             System.out.println(x + " != " + y + " - WRONG " + message);
             // throw new Exception("wrong number");
         }
