@@ -6,6 +6,7 @@ public class BigInt extends MutableBigInt {
   public static final BigInt ONE = new BigInt("1");
   public static final BigInt EMPTY = new BigInt("");
   public static final BigInt UNDEFINED = new BigInt("undefined");
+  public static final int PRECISION = 8;
 
   private int originalBase;
 
@@ -211,12 +212,11 @@ public class BigInt extends MutableBigInt {
       return BigInt.UNDEFINED.clone();
     }
 
-    int precision = 8;
     BigInt[] result_with_remainder = this.divRemainder(other);
     BigInt remainder = result_with_remainder[1];
-    remainder.moveDecimal(precision);
+    remainder.moveDecimal(BigInt.PRECISION);
     BigInt[] second_result = remainder.divRemainder(other);
-    second_result[0].moveDecimal(-precision);
+    second_result[0].moveDecimal(-BigInt.PRECISION);
     return result_with_remainder[0].add(second_result[0]);
   }
 
@@ -227,11 +227,16 @@ public class BigInt extends MutableBigInt {
       return result;
     }
     if (this.isNegative() && other.isNegative()) {
-      return this.abs().divRemainder(other.abs());
+      BigInt[] result = this.abs().divRemainder(other.abs());
+      result[1] = result[1].negative();
+      return result;
     }
     if (this.isNegative() || other.isNegative()) {
       BigInt[] result = this.abs().divRemainder(other.abs());
       result[0] = result[0].negative();
+      if (this.isNegative()) {
+        result[1] = result[1].negative();
+      }
       return result;
     }
 

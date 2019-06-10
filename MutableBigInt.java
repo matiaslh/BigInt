@@ -64,7 +64,8 @@ public class MutableBigInt {
     public void setNumberPlace(int place, int digit) {
         int index = this.getIndexFromPlace(place);
         if (index >= this.getLength()) {
-            this.addToBack(MutableBigInt.repeatString("0", index - this.getLength() + 1));
+            this.addToBack("." + MutableBigInt.repeatString("0", index - this.getLength() + 1));
+            index = this.getIndexFromPlace(place);
         }
         this.setDigit(index, digit);
     }
@@ -98,11 +99,19 @@ public class MutableBigInt {
         if (indexDecimal + places > this.getLength()) {
             int amountZeros = indexDecimal + places - this.getLength();
             this.addToBack(MutableBigInt.repeatString("0", amountZeros));
+            if (isNegative) {
+                this.addToFront("-");
+            }
+            this.format();
             return;
         } else if (indexDecimal + places < 0) {
             int amountZeros = -(indexDecimal + places);
             this.addToFront(MutableBigInt.repeatString("0", amountZeros));
             this.setNumber("0." + this.getNumber());
+            if (isNegative) {
+                this.addToFront("-");
+            }
+            this.format();
             return;
         }
 
@@ -112,6 +121,7 @@ public class MutableBigInt {
         if (isNegative) {
             this.addToFront("-");
         }
+        this.format();
     }
 
     public int integerPlaces() {
@@ -159,13 +169,13 @@ public class MutableBigInt {
         return true;
     }
 
-    public void borrowOne(int index) {
-        if (this.getNumberPlace(index) == 0) {
-            this.setNumberPlace(index, 9);
-            this.borrowOne(index + 1);
+    public void borrowOne(int place) {
+        if (this.getNumberPlace(place) == 0) {
+            this.setNumberPlace(place, 9);
+            this.borrowOne(place + 1);
         } else {
-            int digit = this.getNumberPlace(index) - 1;
-            this.setNumberPlace(index, digit);
+            int digit = this.getNumberPlace(place) - 1;
+            this.setNumberPlace(place, digit);
         }
     }
 
